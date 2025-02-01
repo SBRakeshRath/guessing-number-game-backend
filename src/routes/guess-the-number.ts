@@ -11,8 +11,8 @@ const bodySchema = z.object({
   number: z.number(),
 });
 configDotenv();
-const minNumber = parseInt(process.env.MIN_NUMBER);
-const maxNumber = parseInt(process.env.MAX_NUMBER);
+const minNumber = parseInt(process.env.MIN_NUMBER_RANGE);
+const maxNumber = parseInt(process.env.MAX_NUMBER_RANGE);
 
 guessTheNumberRouter.post("/guess-the-number", async (req, res) => {
   if (!bodySchema.safeParse(req.body).success) {
@@ -31,7 +31,6 @@ guessTheNumberRouter.post("/guess-the-number", async (req, res) => {
     // const tokenRes = await auth.verifyIdToken(idToken);
     // const userId = tokenRes.uid;
     const userId = req.body.idToken;
-
 
     // initialize transaction
     if (!(await checkRateLimit(userId))) {
@@ -57,7 +56,9 @@ guessTheNumberRouter.post("/guess-the-number", async (req, res) => {
             timestamp: Date.now(),
           });
           // change the number to new one
-          const newNumber = Math.random() * (maxNumber - minNumber) + minNumber;
+          const newNumber = Math.floor(
+            Math.random() * (maxNumber - minNumber + 1) + minNumber
+          );
 
           await t.update(docRef, {
             currentNumber: newNumber,
@@ -73,7 +74,9 @@ guessTheNumberRouter.post("/guess-the-number", async (req, res) => {
           (oldScore >= maxNumber - 10 && oldScore <= maxNumber)
         ) {
           await t.update(docRef, {
-            currentNumber: Math.random() * (maxNumber - minNumber) + minNumber,
+            currentNumber: Math.floor(
+              Math.random() * (maxNumber - minNumber + 1) + minNumber
+            ),
           });
           return "seriously bro!! it the number was just " + oldScore;
         }

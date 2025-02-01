@@ -28,8 +28,10 @@ guessTheNumberRouter.post("/guess-the-number", async (req, res) => {
 
   try {
     const auth = getAuth();
-    const tokenRes = await auth.verifyIdToken(idToken);
-    const userId = tokenRes.uid;
+    // const tokenRes = await auth.verifyIdToken(idToken);
+    // const userId = tokenRes.uid;
+    const userId = req.body.idToken;
+
 
     // initialize transaction
     if (!(await checkRateLimit(userId))) {
@@ -39,7 +41,7 @@ guessTheNumberRouter.post("/guess-the-number", async (req, res) => {
     const db = getFirestore();
 
     const tRes = await db.runTransaction(async (t) => {
-      const docRef = db.collection("score-board").doc("score");
+      const docRef = db.collection("gng-score-board").doc("score");
 
       try {
         const doc = await t.get(docRef);
@@ -48,7 +50,7 @@ guessTheNumberRouter.post("/guess-the-number", async (req, res) => {
         }
         if (doc.data().currentNumber == number) {
           //create winner collection if not exists abd add user ID to it
-          const winnerCollection = db.collection("winners");
+          const winnerCollection = db.collection("gng-winners");
           await winnerCollection.add({
             userId: userId,
             number: number,

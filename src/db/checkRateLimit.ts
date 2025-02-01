@@ -2,7 +2,7 @@ import { getFirestore, Timestamp } from "firebase-admin/firestore";
 
 async function checkRateLimit(userId: string) {
   const db = getFirestore();
-  const collection = db.collection("request-limiter");
+  const collection = db.collection("gng-request-limiter");
   //minimum time between two requests is 5 seconds
   const latency = 5000;
 
@@ -23,7 +23,7 @@ async function checkRateLimit(userId: string) {
 
 export async function updateRateLimit(userId: string) {
   const db = getFirestore();
-  const collection = db.collection("request-limiter");
+  const collection = db.collection("gng-request-limiter");
   try {
     const doc = await collection.where("userId", "==", userId).get();
     if (doc.empty) {

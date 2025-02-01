@@ -28,9 +28,8 @@ guessTheNumberRouter.post("/guess-the-number", async (req, res) => {
 
   try {
     const auth = getAuth();
-    // const tokenRes = await auth.verifyIdToken(idToken);
-    // const userId = tokenRes.uid;
-    const userId = req.body.idToken;
+    const tokenRes = await auth.verifyIdToken(idToken);
+    const userId = tokenRes.uid;
 
     // initialize transaction
     if (!(await checkRateLimit(userId))) {
